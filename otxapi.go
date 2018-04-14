@@ -13,8 +13,10 @@ const (
 	DefaultBaseURL   = "https://otx.alienvault.com"
 	DefaultUserAgent = "go-otx-api/0.2"
 
+	IndicatorsURLPath    = "api/v1/indicators"
 	SubscriptionsURLPath = "api/v1/pulses/subscribed"
 	PulseDetailURLPath   = "api/v1/pulses/"
+	SearchPulseURLPath   = "api/v1/search/pulses"
 	UserURLPath          = "api/v1/user/"
 )
 
@@ -100,14 +102,16 @@ func NewClient(options ...ClientOption) (*Client, error) {
 
 	c.User = &OTXUserDetailService{client: c}
 	c.Pulses = &OTXPulseDetailService{client: c}
+	c.Indicator = &OTXIndicatorService{client: c}
 
 	return c, nil
 }
 
 // A Client manages communication with the OTX API.
 type Client struct {
-	User   *OTXUserDetailService
-	Pulses *OTXPulseDetailService
+	User      *OTXUserDetailService
+	Pulses    *OTXPulseDetailService
+	Indicator *OTXIndicatorService
 
 	baseURL   string
 	userAgent string

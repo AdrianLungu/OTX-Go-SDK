@@ -28,6 +28,35 @@ func (svc *OTXPulseDetailService) Get(pulseID string) (*Pulse, error) {
 	return &p, nil
 }
 
+// Search returns a PulseList.
+func (svc *OTXPulseDetailService) Search(query string, opt *ListOptions) (*PulseList, error) {
+	if opt == nil {
+		opt = &ListOptions{
+			Page:    1,
+			PerPage: 20,
+		}
+	}
+
+	req, err := svc.client.newRequest(http.MethodGet, SearchPulseURLPath, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := addURLOptions(req.URL, opt); err != nil {
+		return nil, fmt.Errorf("applying url options: %v", err)
+	}
+
+	q := req.URL.Query()
+	q.Set(`q`, query)
+	req.URL.RawQuery = q.Encode()
+
+	var p PulseList
+	if err := svc.client.do(req, &p); err != nil {
+		return nil, err
+	}
+	return &p, nil
+}
+
 // Pulse represents an OTX Pulse.
 type Pulse struct {
 	ID                string           `json:"id"`
